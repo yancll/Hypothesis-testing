@@ -1,0 +1,852 @@
+---
+title: "Hypothesis Testing - Evaluation"
+author: "Yan Carlos Leyva"
+date: "10 de enero de 2020"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Excercice 1 
+## A comparison test in the Gaussian framework
+### Question 1, answer:
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: \sigma_1^2 = \sigma_2^2$  
+$H_1: \sigma_1^2  \not= \sigma_2^2$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T = \frac{S_1^2}{S_2^2}\ \sim \ F(n_1 - 1, n_2 - 1)$  
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W\ =\ \left\{T\ \le\ F _\frac{0.05}{2}(29,29) \right\}\ \cup\ \left\{T\ \geq\ F_{\left(1-\frac{0.05}{2}\right)}(29,29) \right\}$  
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 0,0.476 \right)\cup \left( 2.101,\infty  \right) \right\}$
+
+```{r, echo=FALSE}
+x1=seq(0,qf(0.025,29,29),length.out =1000) 
+x2=seq(qf(0.975,29,29),3,length.out =1000) 
+x3=seq(qf(0.025,29,29),qf(0.975,29,29),length.out =1000) 
+plot(x1,df(x1,29,29),type = 'h',col='red',xlim = c(0,3),ylim = c(0,1.2),ylab = '',xlab = '',main = 'Fisher density function')
+points(x3,df(x3,29,29),type = 'h',col='green')
+points(x2,df(x2,29,29),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r, echo=FALSE}
+Soderlin= c(183, 209, 204, 219, 221, 189, 183, 206, 216, 205,
+       188, 181, 185, 209, 178, 194, 168, 194, 203, 214,
+       199, 199, 196, 198, 167, 181, 212, 207, 185, 217)
+
+Feder = c(193, 202, 184, 198, 178, 204, 195, 203, 215, 199,
+       222, 172, 170, 188, 172, 194, 190, 185, 199, 165,
+       192, 183, 187, 180, 165, 176, 198, 187, 187, 217)
+
+mm=c(var(Soderlin),var(Feder),var(Soderlin)/var(Feder))
+mm=as.data.frame(mm)
+rownames(mm)=c('S1^2','S2^2','t')
+colnames(mm)=c('')
+print(mm)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r mm, echo=FALSE}
+x1=seq(0,qf(0.025,29,29),length.out =1000) 
+x2=seq(qf(0.975,29,29),3,length.out =1000) 
+x3=seq(qf(0.025,29,29),qf(0.975,29,29),length.out =1000) 
+plot(x1,df(x1,29,29),type = 'h',col='red',xlim = c(0,3),ylim = c(-0.4,1.2),ylab = '',xlab = '',main = 'Fisher density function')
+points(x3,df(x3,29,29),type = 'h',col='green')
+points(x2,df(x2,29,29),type = 'h',col='red')
+points(mm[3,1],0,type = 'p',pch=c(16),col='black')
+points(mm[3,1],-0.15,type = 'p',pch=c('t'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ is not in the rejection region $W$ $(t\notin W)$, we accept $H_0$, therefore  $\sigma_1^2 = \sigma_2^2$.  
+
+
+
+
+
+### Question 2, answer:
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: {{m}_{1}}\le {{m}_{2}}$  
+$H_1: {{m}_{1}}> {{m}_{2}}$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T=\frac{\overline{{{X}_{1}}}-\overline{{{X}_{2}}}}{{{S}_{p}}\sqrt{\frac{1}{{{n}_{1}}}+\frac{1}{{{n}_{2}}}}}$ 
+
+Where:
+
+$S_{p}^{2}=\frac{S_{1}^{2}\left( {{n}_{1}}-1 \right)+S_{2}^{2}\left( {{n}_{2}}-1 \right)}{{{n}_{1}}+{{n}_{2}}-2}$
+
+
+$T\sim {{t}_{\alpha ,({{n}_{1}}+{{n}_{2}}-2)}}$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{t}_{\alpha ,\left( {{n}_{1}}+{{n}_{2}}-2 \right)}} \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 1.672,\infty \right)\right\}$
+
+```{r, echo=FALSE}
+x1=seq(-4,qt(0.95,58),length.out =1000) 
+x2=seq(qt(0.95,58),4,length.out =1000) 
+
+plot(x1,dt(x1,58),type = 'h',col='green',xlim = c(-4,4),ylim = c(0,0.4),ylab = '',xlab = '',main = 'Student t  density function')
+points(x2,dt(x2,58),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+mm1=mm[-3,]
+mm1=c(mm1,(29*mm1[1]+29*mm1[2])/58)
+mm1=c(mm1,(mean(Soderlin)-mean(Feder))/(sqrt((1/15)*mm1[3])))
+mm1=as.data.frame(mm1)
+rownames(mm1)=c('S1^2','S2^2','Sp^2','t')
+colnames(mm1)=c('')
+print(mm1)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r , echo=FALSE}
+x1=seq(-4,qt(0.95,58),length.out =1000) 
+x2=seq(qt(0.95,58),4,length.out =1000) 
+
+plot(x1,dt(x1,58),type = 'h',col='green',xlim = c(-4,4),ylim = c(-0.15,0.4),ylab = '',xlab = '',main = 'Student t  density function')
+points(x2,dt(x2,58),type = 'h',col='red')
+points(mm1[4,1],0,type = 'p',pch=c(16),col='black')
+points(mm1[4,1],-0.08,type = 'p',pch=c('t'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ it is in rejection region $W$ $(t\in W)$, we reject $H_0$ and accept $H_1$, therefore  ${{m}_{1}}> {{m}_{2}}$.  
+
+### Question 3, answer:
+In he first question it is about checking that the variances in the speed of the first serve are equal, in the second question it is about prove that the speeds of the first serve are different for both players and that the speed of the first servece of Soderling is greater than Federer's speed.
+
+
+
+
+## Justifying the Gaussian framework
+### Question 1, answer:
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: P ={{P }_{0}}$  
+$H_1: P \not ={{P }_{0}}$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T^2=\sum\limits_{k=1}^{m}{\frac{{{\left( {{N}_{k}}\left( n \right)-{{n}{p_0^k}} \right)}^{2}}}{{{n}{p_0^k}}}}$ 
+
+Where:
+
+
+$T^2\sim {{\chi }^{2}}\left( m-1 \right)$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{\chi }^{2}}\left( m-1 \right) \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 12.592,\infty \right)\right\}$
+
+```{r, echo=FALSE}
+x1=seq(0,qchisq(0.95,6),length.out =1000) 
+x2=seq(qchisq(0.95,6),20,length.out =1000) 
+
+plot(x1,dchisq(x1,6),type = 'h',col='green',xlim = c(0,20),ylim = c(0,0.15),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,6),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+classes = cut(Soderlin, c(0,170,180,190,200, 210, 220, Inf), right = FALSE)
+mm2=table(classes)
+mm2=as.data.frame(mm2)
+p01=pnorm(170,mean(Soderlin),sd(Soderlin))-pnorm(0,mean(Soderlin),sd(Soderlin))
+p02=pnorm(180,mean(Soderlin),sd(Soderlin))-pnorm(170,mean(Soderlin),sd(Soderlin))
+p03=pnorm(190,mean(Soderlin),sd(Soderlin))-pnorm(180,mean(Soderlin),sd(Soderlin))
+p04=pnorm(200,mean(Soderlin),sd(Soderlin))-pnorm(190,mean(Soderlin),sd(Soderlin))
+p05=pnorm(210,mean(Soderlin),sd(Soderlin))-pnorm(200,mean(Soderlin),sd(Soderlin))
+p06=pnorm(220,mean(Soderlin),sd(Soderlin))-pnorm(210,mean(Soderlin),sd(Soderlin))
+p07=1-pnorm(220,mean(Soderlin),sd(Soderlin))
+mm2$P0k=c(p01,p02,p03,p04,p05,p06,p07)
+mm2$nP0k=30*mm2$P0k
+
+mm2$T2=c(0,0,0,0,0,0,sum(((mm2$Freq-mm2$nP0k)^2)/mm2$nP0k))
+print(mm2)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r , echo=FALSE}
+x1=seq(0,qchisq(0.95,6),length.out =1000) 
+x2=seq(qchisq(0.95,6),20,length.out =1000) 
+
+plot(x1,dchisq(x1,6),type = 'h',col='green',xlim = c(0,20),ylim = c(-0.02,0.15),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,6),type = 'h',col='red')
+points(mm2[7,5],0,type = 'p',pch=c(16),col='black')
+points(mm2[7,5],-0.015,type = 'p',pch=c('t2'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ is not in the rejection region $W$ $(t\notin W)$, we accept $H_0$, therefore  $P ={{P }_{0}}$.  
+
+ We consider that the results are reliable provided that $np_{0}^{k}\ge 5\text{ }\forall k=1,\ldots ,m$, do so the results of this test are not reliable provided.
+
+### Question 1.1, answer:
+As the previous test are not reliable provided then is nesesary that the partition may be modified by concatenating more of five elements, next we go to work to obtain this objective.
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: P ={{P }_{0}}$  
+$H_1: P \not ={{P }_{0}}$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T^2=\sum\limits_{k=1}^{m}{\frac{{{\left( {{N}_{k}}\left( n \right)-{{n}{p_0^k}} \right)}^{2}}}{{{n}{p_0^k}}}}$ 
+
+Where:
+
+
+$T^2\sim {{\chi }^{2}}\left( m-1 \right)$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{\chi }^{2}}\left( m-1 \right) \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 9.488,\infty \right)\right\}$
+
+```{r, echo=FALSE}
+x1=seq(0,qchisq(0.95,4),length.out =1000) 
+x2=seq(qchisq(0.95,4),20,length.out =1000) 
+
+plot(x1,dchisq(x1,4),type = 'h',col='green',xlim = c(0,20),ylim = c(0,0.2),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,4),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+classes = cut(Soderlin, c(0,183,191,199,207,Inf), right = FALSE)
+mm2=table(classes)
+mm2=as.data.frame(mm2)
+p01=pnorm(183,mean(Soderlin),sd(Soderlin))-pnorm(0,mean(Soderlin),sd(Soderlin))
+p02=pnorm(191,mean(Soderlin),sd(Soderlin))-pnorm(183,mean(Soderlin),sd(Soderlin))
+p03=pnorm(199,mean(Soderlin),sd(Soderlin))-pnorm(191,mean(Soderlin),sd(Soderlin))
+p04=pnorm(207,mean(Soderlin),sd(Soderlin))-pnorm(199,mean(Soderlin),sd(Soderlin))
+p05=1-pnorm(207,mean(Soderlin),sd(Soderlin))
+mm2$P0k=c(p01,p02,p03,p04,p05)
+mm2$nP0k=30*mm2$P0k
+
+mm2$T2=c(0,0,0,0,sum(((mm2$Freq-mm2$nP0k)^2)/mm2$nP0k))
+print(mm2)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r , echo=FALSE}
+x1=seq(0,qchisq(0.95,4),length.out =1000) 
+x2=seq(qchisq(0.95,4),20,length.out =1000) 
+
+plot(x1,dchisq(x1,4),type = 'h',col='green',xlim = c(0,20),ylim = c(-0.02,0.2),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,4),type = 'h',col='red')
+points(mm2[5,5],0,type = 'p',pch=c(16),col='black')
+points(mm2[5,5],-0.015,type = 'p',pch=c('t2'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ is not in the rejection region $W$ $(t\notin W)$, we accept $H_0$, therefore  $P ={{P }_{0}}$.  
+
+ We consider that the results are reliable provided that $np_{0}^{k}\ge 5\text{ }\forall k=1,\ldots ,m$, do so the results of this test are reliable provided.
+
+### Question 2, answer:
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: P ={{P }_{0}}$  
+$H_1: P \not ={{P }_{0}}$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T^2=\sum\limits_{k=1}^{m}{\frac{{{\left( {{N}_{k}}\left( n \right)-{{n}{p_0^k}} \right)}^{2}}}{{{n}{p_0^k}}}}$ 
+
+Where:
+
+
+$T^2\sim {{\chi }^{2}}\left( m-1 \right)$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{\chi }^{2}}\left( m-1 \right) \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 12.592,\infty \right)\right\}$
+
+```{r, echo=FALSE}
+x1=seq(0,qchisq(0.95,6),length.out =1000) 
+x2=seq(qchisq(0.95,6),20,length.out =1000) 
+
+plot(x1,dchisq(x1,6),type = 'h',col='green',xlim = c(0,20),ylim = c(0,0.15),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,6),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+classes = cut(Feder, c(0,170,180,190,200, 210, 220, Inf), right = FALSE)
+mm2=table(classes)
+mm2=as.data.frame(mm2)
+p01=pnorm(170,mean(Feder),sd(Feder))-pnorm(0,mean(Feder),sd(Feder))
+p02=pnorm(180,mean(Feder),sd(Feder))-pnorm(170,mean(Feder),sd(Feder))
+p03=pnorm(190,mean(Feder),sd(Feder))-pnorm(180,mean(Feder),sd(Feder))
+p04=pnorm(200,mean(Feder),sd(Feder))-pnorm(190,mean(Feder),sd(Feder))
+p05=pnorm(210,mean(Feder),sd(Feder))-pnorm(200,mean(Feder),sd(Feder))
+p06=pnorm(220,mean(Feder),sd(Feder))-pnorm(210,mean(Feder),sd(Feder))
+p07=1-pnorm(220,mean(Feder),sd(Feder))
+mm2$P0k=c(p01,p02,p03,p04,p05,p06,p07)
+mm2$nP0k=30*mm2$P0k
+
+mm2$T2=c(0,0,0,0,0,0,sum(((mm2$Freq-mm2$nP0k)^2)/mm2$nP0k))
+print(mm2)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r , echo=FALSE}
+x1=seq(0,qchisq(0.95,6),length.out =1000) 
+x2=seq(qchisq(0.95,6),20,length.out =1000) 
+
+plot(x1,dchisq(x1,6),type = 'h',col='green',xlim = c(0,20),ylim = c(-0.02,0.15),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,6),type = 'h',col='red')
+points(mm2[7,5],0,type = 'p',pch=c(16),col='black')
+points(mm2[7,5],-0.015,type = 'p',pch=c('t2'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ is not in the rejection region $W$ $(t\notin W)$, we accept $H_0$, therefore  $P ={{P }_{0}}$.  
+
+ We consider that the results are reliable provided that $np_{0}^{k}\ge 5\text{ }\forall k=1,\ldots ,m$, do so the results of this test are not reliable provided.
+
+
+
+### Question 2.1, answer:
+As the previous test are not reliable provided then is nesesary that the partition may be modified by concatenating more of five elements, next we go to work to obtain this objective.
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0: P ={{P }_{0}}$  
+$H_1: P \not ={{P }_{0}}$  
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = 0.05$  
+
+Step 3: Select the test statistic, $T$;  
+$T^2=\sum\limits_{k=1}^{m}{\frac{{{\left( {{N}_{k}}\left( n \right)-{{n}{p_0^k}} \right)}^{2}}}{{{n}{p_0^k}}}}$ 
+
+Where:
+
+
+$T^2\sim {{\chi }^{2}}\left( m-1 \right)$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{\chi }^{2}}\left( m-1 \right) \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 9.488,\infty \right)\right\}$
+
+```{r, echo=FALSE}
+x1=seq(0,qchisq(0.95,4),length.out =1000) 
+x2=seq(qchisq(0.95,4),20,length.out =1000) 
+
+plot(x1,dchisq(x1,4),type = 'h',col='green',xlim = c(0,20),ylim = c(0,0.2),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,4),type = 'h',col='red')
+legend('topright',legend = c('Rejection region','Accept region'),col=c('red','green'),pch=c(16,16))
+```
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+classes = cut(Feder, c(0,178,186,194,202,Inf), right = FALSE)
+mm2=table(classes)
+mm2=as.data.frame(mm2)
+p01=pnorm(178,mean(Feder),sd(Feder))-pnorm(0,mean(Feder),sd(Feder))
+p02=pnorm(186,mean(Feder),sd(Feder))-pnorm(178,mean(Feder),sd(Feder))
+p03=pnorm(194,mean(Feder),sd(Feder))-pnorm(186,mean(Feder),sd(Feder))
+p04=pnorm(202,mean(Feder),sd(Feder))-pnorm(194,mean(Feder),sd(Feder))
+p05=1-pnorm(202,mean(Feder),sd(Feder))
+mm2$P0k=c(p01,p02,p03,p04,p05)
+mm2$nP0k=30*mm2$P0k
+
+mm2$T2=c(0,0,0,0,sum(((mm2$Freq-mm2$nP0k)^2)/mm2$nP0k))
+print(mm2)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+```{r , echo=FALSE}
+x1=seq(0,qchisq(0.95,4),length.out =1000) 
+x2=seq(qchisq(0.95,4),20,length.out =1000) 
+
+plot(x1,dchisq(x1,4),type = 'h',col='green',xlim = c(0,20),ylim = c(-0.02,0.2),ylab = '',xlab = '',main = 'Chi-Squared density function')
+points(x2,dchisq(x2,4),type = 'h',col='red')
+points(mm2[5,5],0,type = 'p',pch=c(16),col='black')
+points(mm2[5,5],-0.015,type = 'p',pch=c('t2'),col='black')
+legend('topright',legend = c('Rejection region','Accept region','Observed value t'),col=c('red','green','black'),pch=c(16,16,16))
+```
+
+
+As $t$ is not in the rejection region $W$ $(t\notin W)$, we accept $H_0$, therefore  $P ={{P }_{0}}$.  
+
+ We consider that the results are reliable provided that $np_{0}^{k}\ge 5\text{ }\forall k=1,\ldots ,m$, do so the results of this test are reliable provided.
+
+### Question 3, answer:
+In this training we saw three test to prove the independence between the speeds of the first serves of the two players , this test are:
+
+1 - Testing for the correlation coeficient (Pearson test)
+
+2 - ${{\chi }^{2}}$ test for independence
+
+3 - Spearman test
+
+In the Pearson test it is necessary that the speeds of the first servece of the two players is distributed according to a Gaussian distribution, but in the answers of the questions 1 and 2, we prove that the results of the  Gaussian-test are not reliable provided.
+
+In the ${{\chi }^{2}}$ test we consider that the results are reliable if ${{N}_{ij}}\ge 5,\text{ }\forall i=1,\ldots ,{{m}_{1}}\text{ and }\forall j=1,\ldots ,{{m}_{2}}$ but:
+
+```{r, echo=FALSE}
+Soderlin= c(183, 209, 204, 219, 221, 189, 183, 206, 216, 205,
+       188, 181, 185, 209, 178, 194, 168, 194, 203, 214,
+       199, 199, 196, 198, 167, 181, 212, 207, 185, 217)
+
+Feder = c(193, 202, 184, 198, 178, 204, 195, 203, 215, 199,
+       222, 172, 170, 188, 172, 194, 190, 185, 199, 165,
+       192, 183, 187, 180, 165, 176, 198, 187, 187, 217)
+classes = cut(Soderlin, c(0,170,180,190,200, 210, 220, Inf), right = FALSE)
+mm2=table(classes)
+mm2=as.data.frame(mm2)
+
+classes1 = cut(Feder, c(0,170,180,190,200, 210, 220, Inf), right = FALSE)
+mm1=table(classes1)
+mm1=as.data.frame(mm1)
+
+mm1$ss=mm2$Freq
+
+colnames(mm1)=c('Classes', 'Freq_Federer','Freq_Soderling')
+
+print(mm1)
+```
+
+And sometimes ${{N}_{ij}}< 5$.
+
+
+In the Spearman test all the hypotheses of the test are completed, hence this it is the appropriate test to test the independence between the speeds of the two player's ???rst serves.
+
+Building the Spearman test:
+
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+$H_0:$ $X$ and $Y$ are independent 
+$H_1: $ $X$ and $Y$ are not independent 
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = \alpha_0$  
+
+Step 3: Select the test statistic, $T$;  
+$T={{S}_{n}}=\sum\limits_{i=1}^{n}{{{R}_{X}}\left( i \right){{R}_{Y}}\left( i \right)}$
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T<\underset{\scriptscriptstyle-}{s} \right\}\cup \left\{ T>\bar{s} \right\}$
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+
+
+
+
+
+
+
+
+
+# Excercice 2 
+## Building a uniformly most powerful test
+### Question 1 item a), answer:
+${{F}_{\ln {{x}_{i}}}}=P\left( \ln {{x}_{i}}\le t \right)$
+
+${{F}_{\ln {{x}_{i}}}}=P\left( {{e}^{\ln {{x}_{i}}}}\le {{e}^{t}} \right)$
+
+${{F}_{\ln {{x}_{i}}}}=P\left( {{x}_{i}}\le {{e}^{t}} \right)$
+
+${{F}_{\ln {{x}_{i}}}}={{F}_{{{x}_{i}}}}\left( {{e}^{t}} \right)$
+
+$\Rightarrow {{f}_{\ln {{x}_{i}}}}(t)=\frac{\partial \left[ {{F}_{{{x}_{i}}}}\left( {{e}^{t}} \right) \right]}{\partial t}=\frac{\partial \left[ {{e}^{t}} \right]}{\partial t}*F_{{{x}_{i}}}^{'}\left( {{e}^{t}} \right)={{e}^{t}}{{f}_{{{x}_{i}}}}\left( {{e}^{t}} \right)$
+
+${{f}_{\ln {{x}_{i}}}}(t)={{e}^{t}}\frac{1}{{{e}^{t}}\sqrt{2\pi }}{{e}^{-\frac{{{\left( \ln {{e}^{t}}-\theta  \right)}^{2}}}{2}}}{{I }_{\left] 0,\infty  \right[}}\left( {{e}^{t}} \right)$
+
+
+but ${{I }_{\left] 0,\infty  \right[}}\left( {{e}^{t}} \right)=1,\text{ }\forall t\in R$
+
+$\Rightarrow {{f}_{\ln {{x}_{i}}}}(t)=\frac{1}{\sqrt{2\pi }}{{e}^{-\frac{{{\left( t-\theta  \right)}^{2}}}{2}}}$
+
+$\because \text{ }\ln {{X}_{i}}\sim N\left( \theta ,1 \right)$ 
+
+### Question 1 item b), answer:
+In other order, due that
+$\prod\limits_{i=1}^{15}{{{X}_{i}}}\sim Log-N\left( \theta ,\sum\limits_{i=1}^{15}{\sigma _{i}^{2}} \right)=Log-N\left( \theta ,15 \right)$
+
+${{F}_{\sum{\ln {{X}_{i}}}}}\left( t \right)=P\left( \sum{\ln {{X}_{i}}}\le t \right)$ 
+
+${{F}_{\sum{\ln {{X}_{i}}}}}\left( t \right)=P\left( \ln \prod{{{X}_{i}}}\le t \right)$
+
+${{F}_{\sum{\ln {{X}_{i}}}}}\left( t \right)=P\left( {{e}^{\ln \prod{{{X}_{i}}}}}\le {{e}^{t}} \right)$
+
+${{F}_{\sum{\ln {{X}_{i}}}}}\left( t \right)=P\left( \prod{{{X}_{i}}}\le {{e}^{t}} \right)$
+
+${{F}_{\sum{\ln {{X}_{i}}}}}\left( t \right)={{F}_{\prod{{{X}_{i}}}}}\left( {{e}^{t}} \right)$
+
+
+Them it is similar to: Question 1 item a) we arrives to:
+
+$\sum\limits_{i=1}^{15}{{{lnX}_{i}}}\sim N\left( \theta ,15 \right)$
+
+
+### Question 2, answer:
+
+Since
+
+${{L}_{\theta }}\left( \ln {{X}_{i}} \right)={{\left( 2\pi  \right)}^{-\frac{15}{2}}}{{e}^{\left( -\frac{1}{2}\sum\limits_{i=1}^{15}{ln{{X}_{i}}^{2}} \right)}}{{e}^{\left( -\frac{15{{\theta }^{2}}}{2} \right)}}{{e}^{\left( \theta \sum\limits_{i=1}^{15}{ln{{X}_{i}}} \right)}}$
+
+${{L}_{\theta }}\left( \ln {{X}_{i}} \right)={{\left( 2\pi  \right)}^{-\frac{15}{2}}}{{e}^{\left( -\frac{1}{2}\sum\limits_{i=1}^{15}{ln{{X}_{i}}^{2}} \right)}}{{e}^{\left( \theta \sum\limits_{i=1}^{15}{ln{{X}_{i}}}-\frac{15{{\theta }^{2}}}{2} \right)}}$
+
+and:
+
+$h\left( \ln {{X}_{i}} \right)={{\left( 2\pi  \right)}^{-\frac{15}{2}}}{{e}^{\left( -\frac{1}{2}\sum\limits_{i=1}^{15}{ln{{X}_{i}}^{2}} \right)}}$
+
+$g\left( \theta  \right)=\theta$ is an increasing function
+
+$T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{ln{{X}_{i}}}$
+
+$B\left( \theta  \right)=\frac{15{{\theta }^{2}}}{2}$
+
+
+then:
+
+${{L}_{\theta }}\left( \ln {{X}_{i}} \right)=h\left( \ln {{X}_{i}} \right){{e}^{\left[ g\left( \theta  \right)T\left( \ln {{X}_{i}} \right)-B\left( \theta  \right) \right]}}$
+
+has a monotone likelihood ratio in $T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{ln{{X}_{i}}}$
+
+
+### Question 3, answer:
+Since
+
+$H_0: {\theta} = 0$ 
+
+$H_1: {\theta} < 0$ 
+
+and $\alpha = 0.025$  
+
+As the parametric model has a monotone likelihood ratio, strictly increasing in $T\left( \ln {{X}_{i}} \right)$, an exhaustive statistic, then exists an $UMP(\alpha)$ test, having the following form:
+
+
+${{\psi }_{1}}=\left\{ \begin{matrix}
+   1\text{  if  }T\left( \ln {{X}_{i}} \right)<k  \\
+   0\text{  if  }T\left( \ln {{X}_{i}} \right)>k  \\
+   c\text{  if  }T\left( \ln {{X}_{i}} \right)=k  \\
+\end{matrix} \right.$
+
+Where $T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{{{lnX}_{i}}}$
+
+Since $\text{W=}\left\{T\left( \ln {{X}_{i}} \right)<k\right\}$ and $P_{H_0}(T\in W)=\alpha$
+
+$\Rightarrow P_{H_0}(T\left( \ln {{X}_{i}} \right)<k)=0.025$ but $T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{{{lnX}_{i}}}\sim N\left( \theta ,15 \right)$
+
+
+$\Rightarrow P_{H_0}(\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}<\frac{k-\theta_0}{15})=0.025$ as $\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}\sim N\left( 0 ,1 \right)$
+
+
+$\frac{k-\theta_0}{15}=-1.960$
+
+$\frac{k}{15}=-1.960$
+
+$k=-29.399$
+
+Besides as $T\left( \ln {{X}_{i}} \right)\sim N\left( \theta ,15 \right)$ and Gaussian distribution is continue then $P(T\left( \ln {{X}_{i}} \right)=k)=0$
+
+therefore
+
+${{\psi }_{1}}=\left\{ \begin{matrix}
+   1\text{  if  }T\left( \ln {{X}_{i}} \right)<-29.399  \\
+   0\text{  if  }T\left( \ln {{X}_{i}} \right)>-29.399  \\
+\end{matrix} \right.$
+
+### Question 4, answer:
+Since
+
+$H_0: {\theta} = 0$ 
+
+$H_1: {\theta} > 0$ 
+
+and $\alpha = 0.025$  
+
+As the parametric model has a monotone likelihood ratio, strictly increasing in $T\left( \ln {{X}_{i}} \right)$, an exhaustive statistic, then exists an $UMP(\alpha)$ test, having the following form:
+
+
+${{\psi }_{2}}=\left\{ \begin{matrix}
+   1\text{  if  }T\left( \ln {{X}_{i}} \right)>k  \\
+   0\text{  if  }T\left( \ln {{X}_{i}} \right)<k  \\
+   c\text{  if  }T\left( \ln {{X}_{i}} \right)=k  \\
+\end{matrix} \right.$
+
+Where $T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{{{lnX}_{i}}}$
+
+As $\text{W=}\left\{T\left( \ln {{X}_{i}} \right)>k\right\}$ and $P_{H_0}(T\in W)=\alpha$
+
+$\Rightarrow P_{H_0}(T\left( \ln {{X}_{i}} \right)>k)=0.025$ but $T\left( \ln {{X}_{i}} \right)=\sum\limits_{i=1}^{15}{{{lnX}_{i}}}\sim N\left( \theta ,15 \right)$
+
+
+$\Rightarrow P_{H_0}(\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}>\frac{k-\theta_0}{15})=0.025$
+
+$1-P_{H_0}(\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}<\frac{k-\theta_0}{15})=0.025$
+
+$P_{H_0}(\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}<\frac{k-\theta_0}{15})=0.975$ like $\frac{T\left( \ln {{X}_{i}} \right)-\theta_0}{15}\sim N\left( 0 ,1 \right)$
+
+
+$\frac{k-\theta_0}{15}=1.960$
+
+$\frac{k}{15}=1.960$
+
+$k=29.399$
+
+Besides, as $T\left( \ln {{X}_{i}} \right)\sim N\left( \theta ,15 \right)$ and Gaussian distribution is continue then $P(T\left( \ln {{X}_{i}} \right)=k)=0$
+
+therefore
+
+${{\psi }_{2}}=\left\{ \begin{matrix}
+   1\text{  if  }T\left( \ln {{X}_{i}} \right)>29.399  \\
+   0\text{  if  }T\left( \ln {{X}_{i}} \right)<29.399  \\
+\end{matrix} \right.$
+
+
+
+### Question 4.1, answer:
+${{\psi }_{1}}+{{\psi }_{2}}=\left\{ \begin{matrix}
+   1\text{  if  }T\left( \ln {{X}_{i}} \right)<-29.399\text{ or }T\left( \ln {{X}_{i}} \right)>29.399  \\
+  0\text{  if  }-29.399<T\left( \ln {{X}_{i}} \right)<29.399\text{                 } \\ 
+ 0\text{  if  }T\left( \ln {{X}_{i}} \right)=29.399 \\ 
+ 0\text{  if  }T\left( \ln {{X}_{i}} \right)=-29.399 \\ 
+\end{matrix} \right.$
+
+and ${{\psi }_{1}}+{{\psi }_{2}}$ is uniformly most powerful among all unbiased tests of level $\alpha$ ,$UMPU(\alpha)$, for the:
+
+Bilateral test 
+
+$H_0:\theta=0$ against $H_1:\theta\not=0$
+
+### Question 5, answer:
+The Bilateral test $H_0:\theta=0$ against $H_1:\theta\not=0$ is equivalent to Bilateral test
+
+$H_0:\theta\in [0,0]$ against $H_1:\theta<0$ or $\theta>0$
+
+But in $\left( E,E ,{{P}_{\theta}},\theta \in \Theta  \right)$ a parametric dominated model with respect to a probability measure $\mu$, and $\Theta \in \mathbb{R}$. Also  the model has a monotone likelihood ratio, strictly increasing in $T\left( \ln {{X}_{i}} \right)$. Then does not exist a $UMP(\alpha)$ test.
+
+
+<!-- When -->
+
+<!-- $\frac{{{L}_{{{\theta }_{1}}}}\left( \ln {{X}_{i}} \right)}{{{L}_{{{\theta }_{0}}}}\left( \ln {{X}_{i}} \right)}=\frac{h\left( \ln {{X}_{i}} \right){{e}^{\left[ g\left( {{\theta }_{1}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{1}} \right) \right]}}}{h\left( \ln {{X}_{i}} \right){{e}^{\left[ g\left( {{\theta }_{0}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{0}} \right) \right]}}}$ $<k_1$ -->
+
+<!-- $\frac{{{L}_{{{\theta }_{1}}}}\left( \ln {{X}_{i}} \right)}{{{L}_{{{\theta }_{0}}}}\left( \ln {{X}_{i}} \right)}=\frac{{{e}^{\left[ g\left( {{\theta }_{1}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{1}} \right) \right]}}}{{{e}^{\left[ g\left( {{\theta }_{0}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{0}} \right) \right]}}}$ $<k_1$ -->
+
+<!-- $\frac{{{L}_{{{\theta }_{1}}}}\left( \ln {{X}_{i}} \right)}{{{L}_{{{\theta }_{0}}}}\left( \ln {{X}_{i}} \right)}={{e}^{\left[ g\left( {{\theta }_{1}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{1}} \right)-g\left( {{\theta }_{0}} \right)T\left( \ln {{X}_{i}} \right)+B\left( {{\theta }_{0}} \right) \right]}}$ $<k_1$ -->
+
+<!-- Then -->
+
+<!-- $\ln \left\{ {{e}^{\left[ g\left( {{\theta }_{1}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{1}} \right)-g\left( {{\theta }_{0}} \right)T\left( \ln {{X}_{i}} \right)+B\left( {{\theta }_{0}} \right) \right]}} \right\}<\ln {{k}_{1}}$ -->
+
+<!-- $g\left( {{\theta }_{1}} \right)T\left( \ln {{X}_{i}} \right)-B\left( {{\theta }_{1}} \right)-g\left( {{\theta }_{0}} \right)T\left( \ln {{X}_{i}} \right)+B\left( {{\theta }_{0}} \right)<\ln {{k}_{1}}$ -->
+
+<!-- ${{\theta }_{1}}T\left( \ln {{X}_{i}} \right)-\frac{15\theta _{1}^{2}}{2}-{{\theta }_{0}}T\left( \ln {{X}_{i}} \right)+\frac{15\theta _{0}^{2}}{2}<\ln {{k}_{1}}$ -->
+
+<!-- but ${{\theta }_{1}}=0$ -->
+
+<!-- $\Rightarrow {{\theta }_{1}}T\left( \ln {{X}_{i}} \right)-\frac{15\theta _{1}^{2}}{2}<\ln {{k}_{1}}$ -->
+
+<!-- $\Rightarrow T\left( \ln {{X}_{i}} \right)<\frac{\ln {{k}_{1}}+\frac{15\theta _{1}^{2}}{2}}{{{\theta }_{1}}}$ -->
+
+<!-- and making $k=\frac{\ln {{k}_{1}}+\frac{15\theta _{1}^{2}}{2}}{{{\theta }_{1}}}$ -->
+
+<!-- we arrives that -->
+
+<!-- $\frac{{{L}_{{{\theta }_{1}}}}\left( \ln {{X}_{i}} \right)}{{{L}_{{{\theta }_{0}}}}\left( \ln {{X}_{i}} \right)}<{{k}_{1}}\Leftrightarrow T\left( \ln {{X}_{i}} \right)<k$ when $k=\frac{\ln {{k}_{1}}+\frac{15\theta _{1}^{2}}{2}}{{{\theta }_{1}}}$ -->
+
+
+
+<!-- like $\alpha ={{P}_{{{H}_{0}}}}\left( T\in W \right)$ and like -->
+
+## Kolmogorov-Smirnov non-parametric testing
+### Question 1, answer:
+As $X\sim Log-N\left( 0,1 \right)$
+
+${{F}_{x}}\left( t \right)=P\left( x\le t \right)$
+
+${{F}_{x}}\left( t \right)=P\left( \ln x\le \ln t \right)\text{ }\forall t\in \left] 0,\infty  \right[$
+
+${{F}_{x}}\left( t \right)=P\left( \ln x\le \ln t \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( t \right)\text{ }$
+
+${{F}_{x}}\left( t \right)={{F}_{\ln x}}\left( \ln t \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( t \right)$
+
+${{F}_{x}}\left( t \right)=\Phi \left( \ln t \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( t \right),\text{ because }\operatorname{lnX}\sim N\left( 0,1 \right)$
+
+
+### Question 2, answer:
+Steps for the construction of test:
+ 
+Step 1: Select the hypothesis $H_0$ and $H_1$;  
+
+$H_0:$ $P$ is a log-normal distribution with parameters 0 and 1  
+
+$H_1:$ $P$ is not a lognormal distribution with parameters 0 and 1
+
+or
+
+$H_0: F={{F}_{0}}$  
+
+$H_1: F\not= {{F}_{0}}$  
+
+When ${{F}_{0}}$ is to cumulative distribution function to the log-normal distribution with parameters 0 and 1.     
+
+Step 2: Fix the level of the test or the 1st type error equal to $\alpha$;  
+$\alpha = \alpha_0$  
+
+Step 3: Select the test statistic, $T$;  
+$T=D_n=\sqrt{n}sup_{x\in R} \left| F_n(x)-F_0(x)\right|\sim U_n[0,1]$ 
+
+but in Question 1 we prove that $F_0(x)=\Phi \left( \ln x \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( x \right)$
+
+then
+
+$T=D_n=\sqrt{n}sup_{x\in R} \left| F_n(x)-\Phi \left( \ln x \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( x \right)\right|\sim U_n[0,1]$ 
+
+Step 4: Determine the form of the rejection region $W$, depending on the behavior of $T$ under $H_1$;  
+$W=\left\{ T>{{d}_{n ,1-\alpha_0}} \right\}$
+
+### Question 3, answer:
+
+$\alpha = \alpha_0=0.05$ 
+
+Step 5: Explicitly compute the rejection region $W$ according to $\alpha$;
+
+$\text{W=}\left\{ \left( 0.338\sqrt{15},\infty \right)\right\}$
+
+$\text{W=}\left\{ \left( 1.309,\infty \right)\right\}$
+
+Step 6: (Optional) Compute the 2nd type error and/or the power of the test;
+
+Step 7: Compute the observed value, $t$, for the test statistic $T$;  
+
+```{r , echo=FALSE}
+sample1 = c(1.69, 1.33, 0.05, 0.17, 2.41, 1, 14.41, 0.36, 6.79, 0.50, 0.15, 0.25, 1.64, 2.28, 7.64)
+pp=order(sample1)
+sample1=sample1[pp]
+sample1=as.data.frame(sample1)
+colnames(sample1)=c('Sample')
+sample1$Fn=c(1:15)/15
+sample1$Iln=pnorm(log(sample1$Sample))
+sample1$Fn_Iln=abs(sample1$Fn-sample1$Iln)
+sample1$sqrt15Dn=sqrt(15)*c(rep(0,14),max(sample1$Fn_Iln))
+
+
+plot(sample1$Sample,sample1$Iln,type = 'l',col='red',ylab = '',xlab = '',main = 'Empirical distribution and theoretical distribution')
+points(sample1$Sample,sample1$Fn,type = 'l',col='blue')
+legend('bottomright',legend = c('Empirical distribution','Theoretical distribution'),col=c('red','blue'),pch=c(16,16))
+
+print(sample1)
+
+#print(mm1)
+```
+
+
+Step 8: According to $t$, decide whether to accept or not $H_0$.  
+
+As $t=\sqrt{15}D_n=0.712<1.309$ is not in the rejection region $W$ $(t\notin W)$ then accept $H_0$, then $P$ is a log-normal distribution with parameters 0 and 1.  
+
+### Question 4, answer:
+
+The conclusion of this test is that $X=(X_1,\ldots ,X_15)\sim log-N(0,1)$, and it is cumulative distribution function is: $\Phi \left( \ln x \right){{\text{I}}_{\left] 0,\infty  \right[}}\left( x \right)$, where $\Phi$ is the cumulative distribution function of the standard Gaussian, $N(0, 1)$.
+
+
+
+
+
